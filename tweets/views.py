@@ -9,7 +9,7 @@ def feed(request):
     user = request.user
 
     # Get the list of users that the logged-in user is following (including themselves)
-    following_users = Follow.objects.filter(follower=user).values_list('followed', flat=True)
+    following_users = Follow.objects.filter(follower=user).values_list('following', flat=True)
     following_users = list(following_users) + [user.id]  # Add the current user to the list of followed users
 
     # Get all tweets from followed users, ordered by creation date (newest first)
@@ -26,3 +26,21 @@ def create_tweet(request):
         tweet.save()
         return redirect('feed') # Redirect back to feed after tweet is published
     return render(request, 'tweets/create_tweet.html')
+
+@login_required
+def follow(request, user_id):
+    user_to_follow = User.objects.get(id=user_id)
+    
+    if request.user != user_to_follow:
+        Follow.objects.get_or_create(follower=request.user, following=user_to_follow)
+        
+    return redirect('feed')
+
+@login_required
+def unfollow(request, user_id):
+    user_to_unfollow = User.objects.get(id=user_id)
+    
+    if request.user != user_to_unfollow:
+        Follow.objects.filter(follower=request.user, following=user_to_unfollow).delete()
+    
+    return redirect('feed')
