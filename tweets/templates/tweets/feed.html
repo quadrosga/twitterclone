@@ -1,0 +1,12 @@
+{% extends 'base_generic.html' %} {% block content %}
+<h2>Your Feed</h2>
+
+{% for tweet in tweets %}
+<div class="tweet">
+  <p><strong>{{ tweet.user.username }}</strong> said:</p>
+  <p>{{ tweet.content }}</p>
+  <p><em>{{ tweet.created_at }}</em></p>
+</div>
+{% empty %}
+<p>No tweets to display.</p>
+{% endfor %} {% endblock %}
