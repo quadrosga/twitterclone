@@ -1,5 +1,6 @@
 from django.shortcuts import redirect, render
 from django.contrib.auth.models import User
+from django.contrib.auth.decorators import login_required
 from .models import Tweet, Follow
 from django.db.models import Q
 
@@ -17,10 +18,11 @@ def feed(request):
     # Render the feed with the tweets
     return render(request, 'tweets/feed.html', {'tweets': tweets})
 
+@login_required
 def create_tweet(request):
     if request.method == 'POST':
         content = request.POST.get('content')
         tweet = Tweet(user=request.user, content=content)
         tweet.save()
-        return redirect('feed')  # Redirect back to feed after creating a tweet
+        return redirect('feed') # Redirect back to feed after tweet is published
     return render(request, 'tweets/create_tweet.html')
