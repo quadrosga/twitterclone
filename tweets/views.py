@@ -1,7 +1,7 @@
 from django.shortcuts import redirect, render
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
-from .models import Tweet, Follow
+from .models import Like, Retweet, Tweet, Follow
 from django.db.models import Q
 
 def feed(request):
@@ -43,4 +43,38 @@ def unfollow(request, user_id):
     if request.user != user_to_unfollow:
         Follow.objects.filter(follower=request.user, following=user_to_unfollow).delete()
     
+    return redirect('feed')
+
+@login_required
+def like_tweet(request, tweet_id):
+    tweet = Tweet.objects.get(id=tweet_id)
+    Like.objects.get_or_create(user=request.user, tweet=tweet)
+    return redirect('feed')
+
+@login_required
+def unlike_tweet(request, tweet_id):
+    tweet = Tweet.objects.get(id=tweet_id)
+    Like.objects.filter(user=request.user, tweet=tweet).delete()
+    return redirect('feed')
+
+@login_required
+def reply_to_tweet(request, tweet_id):
+    parent_tweet = Tweet.objects.get(id=tweet_id)
+    if request.method == 'POST':
+        content = request.POST.get('content')
+        tweet = Tweet(user=request.user, content=content, parent_tweet=parent_tweet)
+        tweet.save()
+        return redirect('feed')
+    return render(request, 'tweets/reply_to_tweet.html', {'parent_tweet': parent_tweet})
+
+@login_required
+def retweet(request, tweet_id):
+    tweet = Tweet.objects.get(id=tweet_id)
+    Retweet.objects.get_or_create(user=request.user, tweet=tweet)
+    return redirect('feed')
+
+@login_required
+def unretweet(request, tweet_id):
+    tweet = Tweet.objects.get(id=tweet_id)
+    Retweet.objects.filter(user=request.user, tweet=tweet).delete()
     return redirect('feed')

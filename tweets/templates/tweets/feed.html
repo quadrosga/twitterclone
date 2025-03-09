@@ -7,7 +7,9 @@
   <p>{{ tweet.content }}</p>
   <p><em>{{ tweet.created_at }}</em></p>
 
-  {% if request.user != tweet.user %} {% if request.user.following.all %}
+  <!-- Follow/Unfollow button -->
+  {% if request.user != tweet.user %} {% if
+  request.user.following.filter(following=tweet.user).exists %}
   <form action="{% url 'unfollow' tweet.user.id %}" method="POST">
     {% csrf_token %}
     <button type="submit">Unfollow</button>
@@ -17,7 +19,40 @@
     {% csrf_token %}
     <button type="submit">Follow</button>
   </form>
-  {% endif %} {% endif %}
+  {% endif %}
+
+  <!-- Like/Unlike button -->
+  {% if request.user != tweet.user %} {% if
+  tweet.like_set.filter(user=request.user).exists %}
+  <form action="{% url 'unlike_tweet' tweet.id %}" method="POST">
+    {% csrf_token %}
+    <button type="submit">Unlike</button>
+  </form>
+  {% else %}
+  <form action="{% url 'like_tweet' tweet.id %}" method="POST">
+    {% csrf_token %}
+    <button type="submit">Like</button>
+  </form>
+  {% endif %}
+
+  <!-- Retweet/Unretweet button -->
+  {% if request.user != tweet.user %} {% if
+  tweet.retweet_set.filter(user=request.user).exists %}
+  <form action="{% url 'unretweet' tweet.id %}" method="POST">
+    {% csrf_token %}
+    <button type="submit">Unretweet</button>
+  </form>
+  {% else %}
+  <form action="{% url 'retweet' tweet.id %}" method="POST">
+    {% csrf_token %}
+    <button type="submit">Retweet</button>
+  </form>
+  {% endif %}
+
+  <!-- Reply button -->
+  <form action="{% url 'reply_to_tweet' tweet.id %}" method="GET">
+    <button type="submit">Reply</button>
+  </form>
 </div>
 {% empty %}
 <p>No tweets to display.</p>
