@@ -1,0 +1,14 @@
+{% extends 'base_generic.html' %} {% block content %}
+<div class="reply-box">
+  <h2>Reply to Tweet</h2>
+  <form method="POST">
+    {% csrf_token %}
+    <textarea name="content" placeholder="Your reply..."></textarea>
+    <button type="submit">Post Reply</button>
+  </form>
+</div>
+<div class="tweet-box">
+  <p><strong>{{ parent_tweet.user.username }}</strong> said:</p>
+  <p>{{ parent_tweet.content }}</p>
+</div>
+{% endblock %}

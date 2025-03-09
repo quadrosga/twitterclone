@@ -1,0 +1,132 @@
+{% extends 'base_generic.html' %} {% block content %}
+<div class="feed-container">
+  <!-- Left Sidebar -->
+  <div class="sidebar left-sidebar">
+    <h3>Profile</h3>
+    <p><strong>{{ request.user.username }}</strong></p>
+    <p>{{ request.user.email }}</p>
+    <p class="user-bio">
+      {% if profile.bio %} {{ profile.bio }} {% else %} No bio available.
+    </p>
+    {% endif %}
+    <a href="{% url 'logout' %}" class="logout-btn">Logout</a>
+  </div>
+
+  <!-- Main Feed -->
+  <div class="main-feed">
+    <h2>Home</h2>
+
+    <!-- New Tweet Box -->
+    <div class="tweet-box">
+      <form action="{% url 'post_tweet' %}" method="POST">
+        {% csrf_token %}
+        <textarea
+          name="content"
+          placeholder="What's happening?"
+          required
+        ></textarea>
+        <button type="submit">Tweet</button>
+      </form>
+    </div>
+
+    <!-- Tweets -->
+    {% for tweet in tweets %}
+    <div class="tweet">
+      <div class="tweet-header">
+        <strong>@{{ tweet.user.username }}</strong>
+        <span class="tweet-time">{{ tweet.created_at|timesince }} ago</span>
+      </div>
+      <p class="tweet-content">{{ tweet.content }}</p>
+
+      <div class="tweet-actions">
+        <!-- Like -->
+        {% if tweet.is_liked %}
+        <form action="{% url 'unlike_tweet' tweet.id %}" method="POST">
+          {% csrf_token %}
+          <button type="submit" class="btn like-btn liked">Unlike</button>
+        </form>
+        {% else %}
+        <form action="{% url 'like_tweet' tweet.id %}" method="POST">
+          {% csrf_token %}
+          <button type="submit" class="btn like-btn">Like</button>
+        </form>
+        {% endif %}
+
+        <!-- Retweet -->
+        {% if tweet.is_retweeted %}
+        <form action="{% url 'unretweet' tweet.id %}" method="POST">
+          {% csrf_token %}
+          <button type="submit" class="btn retweet-btn retweeted">
+            Unretweet
+          </button>
+        </form>
+        {% else %}
+        <form action="{% url 'retweet' tweet.id %}" method="POST">
+          {% csrf_token %}
+          <button type="submit" class="btn retweet-btn">Retweet</button>
+        </form>
+        {% endif %}
+
+        <!-- Reply Button -->
+        <button class="btn" onclick="toggleReplyForm('{{ tweet.id }}')">
+          Reply
+        </button>
+
+        <!-- Reply Form (Initially Hidden) -->
+        <div
+          class="reply-box"
+          id="reply-form-{{ tweet.id }}"
+          class="reply-form"
+          style="display: none"
+        >
+          <form action="{% url 'reply_to_tweet' tweet.id %}" method="POST">
+            {% csrf_token %}
+            <textarea
+              name="content"
+              placeholder="Your reply..."
+              required
+            ></textarea>
+            <button type="submit">Post Reply</button>
+          </form>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+
+  <!-- Right Sidebar -->
+  <div class="sidebar right-sidebar">
+    <h3>Trending</h3>
+    <ul class="trending-tags">
+      <li>#DjangoRocks</li>
+      <li>#PythonLife</li>
+      <li>#TechNews</li>
+      <li>#WebDevelopment</li>
+    </ul>
+    <!-- Who to Follow Section -->
+    <h3>Who to Follow</h3>
+    <ul class="who-to-follow">
+      {% for user in suggested_users %}
+      <li>
+        <strong>@{{ user.username }}</strong>
+        <form action="{% url 'follow' user.id %}" method="POST">
+          {% csrf_token %}
+          <button type="submit" class="follow-btn">Follow</button>
+        </form>
+      </li>
+      {% empty %}
+      <li>No suggestions available.</li>
+      {% endfor %}
+    </ul>
+  </div>
+</div>
+
+<!-- JavaScript to Toggle Reply Form -->
+<script>
+  function toggleReplyForm(tweetId) {
+    var replyForm = document.getElementById("reply-form-" + tweetId);
+    replyForm.style.display =
+      replyForm.style.display === "none" ? "block" : "none";
+  }
+</script>
+{% endblock %}
