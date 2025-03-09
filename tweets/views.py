@@ -1,12 +1,15 @@
 from django.shortcuts import redirect, render
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
-from .models import Like, Retweet, Tweet, Follow
+from .models import Like, Profile, Retweet, Tweet, Follow
 from django.db.models import Q
 
+
 def feed(request):
-    # Get the logged-in user
     user = request.user
+
+    # Get the user's profile
+    profile = Profile.objects.get(user=user)
 
     # Get the list of users that the logged-in user is following (including themselves)
     following_users = Follow.objects.filter(follower=user).values_list('following', flat=True)
@@ -15,16 +18,31 @@ def feed(request):
     # Get all tweets from followed users, ordered by creation date (newest first)
     tweets = Tweet.objects.filter(user_id__in=following_users).order_by('-created_at')
 
-    # Render the feed with the tweets
-    return render(request, 'tweets/feed.html', {'tweets': tweets})
+    # Add an `is_liked` and `is_retweeted` attribute to each tweet
+    liked_tweet_ids = Like.objects.filter(user=user).values_list('tweet_id', flat=True)
+    retweeted_tweet_ids = Retweet.objects.filter(user=user).values_list('tweet_id', flat=True)
+
+    # Get some users to suggest (excluding the logged-in user and already followed users)
+    suggested_users = User.objects.exclude(id__in=list(following_users) + [user.id]).order_by('?')[:5]
+
+    for tweet in tweets:
+        tweet.is_liked = tweet.id in liked_tweet_ids
+        tweet.is_retweeted = tweet.id in retweeted_tweet_ids
+        tweet.is_followed = Follow.objects.filter(follower=user, following=tweet.user).exists()
+
+    return render(request, 'tweets/feed.html', {
+        'tweets': tweets,
+        'suggested_users': suggested_users  # Send to template
+    })
+
 
 @login_required
 def create_tweet(request):
     if request.method == 'POST':
         content = request.POST.get('content')
-        tweet = Tweet(user=request.user, content=content)
-        tweet.save()
-        return redirect('feed') # Redirect back to feed after tweet is published
+        if content:
+            Tweet.objects.create(user=request.user, content=content)
+        return redirect('feed')
     return render(request, 'tweets/create_tweet.html')
 
 @login_required
