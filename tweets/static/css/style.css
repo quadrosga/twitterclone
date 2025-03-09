@@ -183,3 +183,72 @@ body {
 .who-to-follow .follow-btn:hover {
   background-color: #0d8af0;
 }
+
+/* Login and register forms */
+.register-container,
+.login-container {
+  width: 100%;
+  max-width: 400px;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: #f4f4f4;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+.register-container li {
+  text-align: left;
+  font-size: 12px;
+}
+
+.helptext {
+  font-size: 12px;
+}
+
+h2 {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.login-form,
+.register-form {
+  display: flex;
+  flex-direction: column;
+
+  > p {
+    margin-bottom: 0;
+  }
+
+  a {
+    color: #0d8af0;
+    text-decoration: none;
+  }
+
+  a:hover {
+    text-decoration: underline;
+  }
+}
+
+.login-form input,
+.register-form input {
+  padding: 10px;
+  margin-bottom: 8px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.login-btn,
+.register-btn {
+  padding: 10px;
+  background-color: #0d8af0;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.login-btn:hover,
+.register-btn:hover {
+  background-color: #1da1f2;
+}

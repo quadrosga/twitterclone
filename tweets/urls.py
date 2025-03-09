@@ -1,4 +1,5 @@
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
+from django.contrib.auth.views import LoginView, LogoutView
 from django.urls import include, path
 
 from tweets import views
@@ -16,4 +17,7 @@ urlpatterns = [
     path('retweet/<int:tweet_id>/', views.retweet, name='retweet'),
     path('unretweet/<int:tweet_id>/', views.unretweet, name='unretweet'),
     path('accounts/', include('django.contrib.auth.urls')),
+    path('login/', LoginView.as_view(), name='login'),
+    path('logout/', LogoutView.as_view(), name='logout'),
+    path('register/', views.register, name='register'),
 ]
