@@ -47,9 +47,6 @@ jobs:
       - name: Ensure Poetry Uses System Python
         run: poetry env use $(which python)
 
-      - name: Configure Poetry to Disable Virtual Environments
-        run: poetry config virtualenvs.create false
-
       - name: Install Dependencies
         run: |
           poetry install --no-interaction
