@@ -63,16 +63,26 @@ def follow(request, user_id):
     user_to_follow = User.objects.get(id=user_id)
     
     if request.user != user_to_follow:
+        # Create the follow relationship
         Follow.objects.get_or_create(follower=request.user, following=user_to_follow)
-        
+
+    # Get all users that the current user is following
+    following_users = Follow.objects.filter(follower=request.user)
+    print(f"Users that {request.user.username} is following: {[follow.following.username for follow in following_users]}")
+
     return redirect('feed')
 
 @login_required
 def unfollow(request, user_id):
     user_to_unfollow = User.objects.get(id=user_id)
     
-    if request.user != user_to_unfollow:
-        Follow.objects.filter(follower=request.user, following=user_to_unfollow).delete()
+    try:
+        # Make sure the logged-in user is the one following the other user
+        follow_instance = Follow.objects.get(follower=request.user, following=user_to_unfollow)
+        follow_instance.delete()  # Remove the follow relationship
+    except Follow.DoesNotExist:
+        # Handle case where the follow relationship doesn't exist
+        pass
     
     return redirect('feed')
 

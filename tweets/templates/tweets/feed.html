@@ -33,7 +33,27 @@
     {% for tweet in tweets %}
     <div class="tweet">
       <div class="tweet-header">
-        <strong>@{{ tweet.user.username }}</strong>
+        <div class="inner-header">
+          <strong>@{{ tweet.user.username }}</strong>
+
+          <!-- Unfollow Button -->
+          {% if tweet.is_followed %}
+          <form
+            action="{% url 'unfollow' tweet.user.id %}"
+            method="POST"
+            style="display: inline"
+          >
+            {% csrf_token %}
+            <button type="submit" class="unfollow-btn">Unfollow</button>
+          </form>
+          {% else %}
+          <form action="{% url 'follow' tweet.user.id %}" method="POST">
+            {% csrf_token %}
+            <button type="submit" class="btn follow-btn">Follow</button>
+          </form>
+          {% endif %}
+        </div>
+
         <span class="tweet-time">{{ tweet.created_at|timesince }} ago</span>
       </div>
       <p class="tweet-content">{{ tweet.content }}</p>
