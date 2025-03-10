@@ -38,22 +38,32 @@ jobs:
         with:
           python-version: 3.11
 
+      - name: Install Poetry
+        run: pip install poetry
+
+      - name: Configure Poetry to disable virtual environments
+        run: poetry config virtualenvs.create false
+
       - name: Debug file structure
         run: ls -R
 
-      - name: Set up Poetry
-        run: pip install poetry
-
-      - name: Configure Poetry virtual environment
-        run: poetry config virtualenvs.create false
-
       - name: Install dependencies
-        run: poetry install --no-root
+        run: poetry install --no-interaction --no-root
+
+      - name: Verify Poetry environment
+        run: poetry env info
+
+      - name: List installed packages
+        run: poetry show
 
       - name: Run migrations
         env:
           DATABASE_URL: postgres://django:django@localhost:5432/test_db
-        run: poetry run python manage.py migrate
+        run: |
+          which python
+          python --version
+          python -m django --version
+          poetry run python manage.py migrate
 
       - name: Run tests
         env:
