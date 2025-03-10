@@ -41,13 +41,13 @@ jobs:
       - name: Install Poetry
         run: pip install poetry
 
-      - name: Configure Poetry to disable virtual environments
+      - name: Ensure Poetry Uses System Python
+        run: poetry env use $(which python)
+
+      - name: Configure Poetry to Disable Virtual Environments
         run: poetry config virtualenvs.create false
 
-      - name: Debug file structure
-        run: ls -R
-
-      - name: Install dependencies
+      - name: Install Dependencies
         run: poetry install --no-interaction --no-root
 
       - name: Verify Poetry environment
