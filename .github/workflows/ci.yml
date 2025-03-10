@@ -59,7 +59,7 @@ jobs:
         run: poetry show
 
       - name: Wait for PostgreSQL to be ready
-        run: sleep 10
+        run: sleep 25
 
       - name: Run migrations
         env:
