@@ -60,7 +60,7 @@ jobs:
 
       - name: Run migrations
         env:
-          DATABASE_URL: postgres://django:django@localhost:5432/test_db
+          DATABASE_URL: postgres://django:django@localhost:5433/test_db
           PYTHONPATH: $(poetry env info --path)/lib/python3.11/site-packages
         run: |
           which python
