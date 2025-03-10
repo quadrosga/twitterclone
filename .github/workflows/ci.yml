@@ -22,7 +22,7 @@ jobs:
           POSTGRES_PASSWORD: django
           POSTGRES_DB: test_db
         ports:
-          - 5432:5432
+          - 5432:5433
         options: >-
           --health-cmd="pg_isready -U django"
           --health-interval=10s
@@ -58,6 +58,9 @@ jobs:
       - name: List installed packages
         run: poetry show
 
+      - name: Wait for PostgreSQL to be ready
+        run: sleep 10
+
       - name: Run migrations
         env:
           DATABASE_URL: postgres://django:django@localhost:5433/test_db
@@ -70,5 +73,5 @@ jobs:
 
       - name: Run tests
         env:
-          DATABASE_URL: postgres://django:django@localhost:5432/test_db
+          DATABASE_URL: postgres://django:django@localhost:5433/test_db
         run: poetry run python manage.py test
