@@ -17,8 +17,11 @@ def register(request):
         form = UserCreationForm()
     return render(request, 'register.html', {'form': form})
 
-
+@login_required
 def feed(request):
+    print(f"User: {request.user}")  # Debugging: Check the user object
+    print(f"Authenticated: {request.user.is_authenticated}")  # Debugging: Check if the user is authenticated
+
     user = request.user
 
     # Get the user's profile
