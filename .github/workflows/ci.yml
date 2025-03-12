@@ -75,12 +75,12 @@ jobs:
 
       - name: Run migrations
         env:
-          DATABASE_URL: postgres://twitteruser:twitteruser@localhost:5433/twitterclone
+          DATABASE_URL: postgres://twitteruser:twitterclone@localhost:5433/twitterclone
           PYTHONPATH: $(poetry env info --path)/lib/python3.11/site-packages
         run: |
           which python
           python --version
-          poetry run python -m twitteruser --version
+          poetry run python -m django --version
           poetry run python manage.py migrate
 
       - name: Run tests
