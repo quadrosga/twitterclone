@@ -1,0 +1,89 @@
+name: Django CI
+
+on:
+  push:
+    branches:
+      - main
+      - workflows
+  pull_request:
+    branches:
+      - main
+      - workflows
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:13
+        env:
+          POSTGRES_USER: twitteruser
+          POSTGRES_PASSWORD: twitterclone
+          POSTGRES_DB: twitterclone
+        ports:
+          - 5433:5432
+        options: >-
+          --health-cmd="pg_isready -U twitterclone"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.11
+
+      - name: Debug File Structure
+        run: ls -lah && find . -name "pyproject.toml"
+
+      - name: Install Poetry
+        run: pip install poetry
+
+      - name: Ensure Poetry Uses System Python
+        run: poetry env use $(which python)
+
+      - name: Install Dependencies
+        run: |
+          poetry install --no-interaction
+          poetry show
+
+      - name: Verify Poetry environment
+        run: poetry env info
+
+      - name: List installed packages
+        run: poetry show
+
+      - name: Wait for PostgreSQL to be ready
+        run: |
+          for i in {1..10}; do
+            if pg_isready -h localhost -p 5433 -U twitteruser -d twitterclone; then
+              echo "PostgreSQL is ready!"
+              break
+            else
+              echo "Waiting for PostgreSQL to be ready..."
+              sleep 10
+            fi
+          done
+
+      - name: Debug Docker Containers
+        run: docker ps -a
+
+      - name: Run migrations
+        env:
+          DATABASE_URL: postgres://twitteruser:twitterclone@localhost:5433/twitterclone
+          PYTHONPATH: $(poetry env info --path)/lib/python3.11/site-packages
+        run: |
+          which python
+          python --version
+          poetry run python -m django --version
+          poetry run python manage.py migrate
+
+      - name: Run tests
+        env:
+          DATABASE_URL: postgres://twitteruser:twitteruser@localhost:5433/twitterclone
+        run: poetry run python manage.py test
