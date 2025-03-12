@@ -22,12 +22,12 @@ jobs:
           POSTGRES_PASSWORD: django
           POSTGRES_DB: test_db
         ports:
-          - 5434:5432 # Changed host port to 5434 to avoid conflicts
+          - 5433:5432
         options: >-
-          --health-cmd pg_isready -U django
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
+          --health-cmd="pg_isready -U django"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
 
     steps:
       - name: Checkout repository
@@ -61,7 +61,7 @@ jobs:
       - name: Wait for PostgreSQL to be ready
         run: |
           for i in {1..10}; do
-            if pg_isready -h localhost -p 5434 -U django -d test_db; then
+            if pg_isready -h localhost -p 5433 -U django -d test_db; then
               echo "PostgreSQL is ready!"
               break
             else
@@ -71,11 +71,11 @@ jobs:
           done
 
       - name: Check PostgreSQL logs
-        run: docker logs $(docker ps -q -f name=postgres)
+        run: docker logs bookstore-db-1
 
       - name: Run migrations
         env:
-          DATABASE_URL: postgres://django:django@localhost:5434/test_db # Updated port to 5434
+          DATABASE_URL: postgres://django:django@localhost:5433/test_db
           PYTHONPATH: $(poetry env info --path)/lib/python3.11/site-packages
         run: |
           which python
@@ -85,5 +85,5 @@ jobs:
 
       - name: Run tests
         env:
-          DATABASE_URL: postgres://django:django@localhost:5434/test_db # Updated port to 5434
+          DATABASE_URL: postgres://django:django@localhost:5433/test_db
         run: poetry run python manage.py test
