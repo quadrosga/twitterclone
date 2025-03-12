@@ -18,8 +18,8 @@ jobs:
       postgres:
         image: postgres:13
         env:
-          POSTGRES_USER: django
-          POSTGRES_PASSWORD: django
+          POSTGRES_USER: twitteruser
+          POSTGRES_PASSWORD: twitterclone
           POSTGRES_DB: test_db
         ports:
           - 5433:5432
