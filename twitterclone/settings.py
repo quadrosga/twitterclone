@@ -15,6 +15,7 @@ from pathlib import Path
 import dj_database_url
 from dotenv import load_dotenv
 
+# Load environment variables from .env file
 load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -86,26 +87,30 @@ TEMPLATES = [
 WSGI_APPLICATION = "twitterclone.wsgi.application"
 
 
-# Database
-# https://docs.djangoproject.com/en/5.1/ref/settings/#databases
-
-# DATABASES = {
-#     'default': dj_database_url.config(
-#         default=os.getenv('DATABASE_URL'),
-#         conn_max_age=600,
-#     )
-# }
-
+# Default SQLite database for local development
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'twitterclone',       # Database name
-        'USER': 'twitteruser',      # PostgreSQL username
-        'PASSWORD': 'twitterclone',  # PostgreSQL password
-        'HOST': 'localhost',          # Database host
-        'PORT': '5432',               # Default PostgreSQL port
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     }
 }
+
+# Override with DATABASE_URL if set
+DATABASES['default'] = dj_database_url.config(
+    default=os.getenv('DATABASE_URL'),
+    conn_max_age=600,
+)
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': 'twitterclone',     
+#         'USER': 'twitteruser',     
+#         'PASSWORD': 'twitterclone',  
+#         'HOST': 'localhost',          
+#         'PORT': '5432',               
+#     }
+# }
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
