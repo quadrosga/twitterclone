@@ -31,8 +31,7 @@ SECRET_KEY = os.getenv('SECRET_KEY', '%yvu#b$-c_duzk!_9x@^6bz5#mo#w3)89m4%-&#^u4
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv('DEBUG', 'False').lower() == 'true'
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1',
-'quadrosga.pythonanywhere.com', 'https://twitterclone-ahpj.onrender.com']
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'quadrosga.pythonanywhere.com', 'twitterclone-ahpj.onrender.com']
 
 
 # Application definition
@@ -160,3 +159,19 @@ LOGOUT_URL = '/api/login/'
 LOGIN_REDIRECT_URL = "feed"
 
 LOGIN_URL = '/api/login/'
+
+CSRF_TRUSTED_ORIGINS = ['https://twitterclone-ahpj.onrender.com']
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'root': {
+        'handlers': ['console'],
+        'level': 'WARNING',
+    },
+}
