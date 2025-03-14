@@ -71,5 +71,5 @@ class SocialMediaTestCase(TestCase):
         
         # Check if tweet from followed user appears in the feed
         response = self.client.login(username='user1', password='password1')
-        response = self.client.get('/api/feed/')
+        response = self.client.get('/feed/')
         self.assertContains(response, self.tweet2.content)
