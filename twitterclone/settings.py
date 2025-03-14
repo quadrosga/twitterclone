@@ -12,6 +12,10 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 
 import os
 from pathlib import Path
+import dj_database_url
+from dotenv import load_dotenv
+
+load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -21,13 +25,13 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-4z-4g=7s=p*vfpl7sr-5%%8@06r+9alhi1-81$z=b(ob-54441"
+SECRET_KEY = os.getenv('SECRET_KEY', '%yvu#b$-c_duzk!_9x@^6bz5#mo#w3)89m4%-&#^u48i@bxiq$')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.getenv('DEBUG', 'False').lower() == 'true'
 
 ALLOWED_HOSTS = ['localhost', '127.0.0.1',
-'quadrosga.pythonanywhere.com']
+'quadrosga.pythonanywhere.com', 'twitterclone.onrender.com']
 
 
 # Application definition
@@ -52,6 +56,7 @@ REST_FRAMEWORK = {
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
@@ -84,17 +89,23 @@ WSGI_APPLICATION = "twitterclone.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
+# DATABASES = {
+#     'default': dj_database_url.config(
+#         default=os.getenv('DATABASE_URL'),
+#         conn_max_age=600,
+#     )
+# }
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'twitterclone',
-        'USER': 'twitteruser',
-        'PASSWORD': 'twitterclone',
-        'HOST': 'localhost',  # Use your database server
-        'PORT': '5433',       # Default PostgreSQL port
+        'NAME': 'twitterclone',       # Database name
+        'USER': 'twitteruser',      # PostgreSQL username
+        'PASSWORD': 'twitterclone',  # PostgreSQL password
+        'HOST': 'localhost',          # Database host
+        'PORT': '5432',               # Default PostgreSQL port
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
@@ -130,13 +141,17 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
-STATIC_URL = "static/"
+STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-LOGOUT_REDIRECT_URL = 'login'
+LOGOUT_URL = '/api/login/'
 
 LOGIN_REDIRECT_URL = "feed"
+
+LOGIN_URL = '/api/login/'
