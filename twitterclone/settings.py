@@ -32,7 +32,7 @@ SECRET_KEY = os.getenv('SECRET_KEY', '%yvu#b$-c_duzk!_9x@^6bz5#mo#w3)89m4%-&#^u4
 DEBUG = os.getenv('DEBUG', 'False').lower() == 'true'
 
 ALLOWED_HOSTS = ['localhost', '127.0.0.1',
-'quadrosga.pythonanywhere.com', 'twitterclone.onrender.com']
+'quadrosga.pythonanywhere.com', 'https://twitterclone-ahpj.onrender.com']
 
 
 # Application definition
