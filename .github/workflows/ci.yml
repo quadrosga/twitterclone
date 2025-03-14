@@ -24,7 +24,7 @@ jobs:
         ports:
           - 5433:5432
         options: >-
-          --health-cmd="pg_isready -U twitterclone"
+          --health-cmd="pg_isready -U twitteruser"
           --health-interval=10s
           --health-timeout=5s
           --health-retries=5
@@ -60,6 +60,7 @@ jobs:
 
       - name: Wait for PostgreSQL to be ready
         run: |
+          sudo apt-get update && sudo apt-get install -y postgresql-client
           for i in {1..10}; do
             if pg_isready -h localhost -p 5433 -U twitteruser -d twitterclone; then
               echo "PostgreSQL is ready!"
@@ -73,6 +74,16 @@ jobs:
       - name: Debug Docker Containers
         run: docker ps -a
 
+      - name: Debug PostgreSQL connection
+        env:
+          DATABASE_URL: postgres://twitteruser:twitterclone@localhost:5433/twitterclone
+        run: |
+          echo "Testing PostgreSQL connection..."
+          psql "$DATABASE_URL" -c "SELECT 1;"
+
+      - name: Debug PostgreSQL logs
+        run: docker logs $(docker ps -q --filter "ancestor=postgres:13")
+
       - name: Run migrations
         env:
           DATABASE_URL: postgres://twitteruser:twitterclone@localhost:5433/twitterclone
@@ -85,5 +96,5 @@ jobs:
 
       - name: Run tests
         env:
-          DATABASE_URL: postgres://twitteruser:twitteruser@localhost:5433/twitterclone
+          DATABASE_URL: postgres://twitteruser:twitterclone@localhost:5433/twitterclone
         run: poetry run python manage.py test
