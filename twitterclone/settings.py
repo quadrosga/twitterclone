@@ -23,21 +23,44 @@ if os.getenv('RUN_MIGRATIONS', 'False').lower() == 'true':
 # Load environment variables from .env file
 load_dotenv()
 
+# Load the .env file from the home directory
+load_dotenv(os.path.join(os.path.expanduser('~'), '.env.production'))
+
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+# Determine the environment
+ENVIRONMENT = os.getenv('ENVIRONMENT', 'development')
+
+# Load the appropriate .env file
+if ENVIRONMENT == 'production':
+    load_dotenv(os.path.join(BASE_DIR, '.env.production'))
+else:
+    load_dotenv(os.path.join(BASE_DIR, '.env'))
+
+# Database configuration
+DATABASES = {
+    'default': {
+        'ENGINE': os.getenv('DATABASE_ENGINE'),
+        'NAME': os.getenv('DATABASE_NAME', BASE_DIR / 'db.sqlite3'),
+        'USER': os.getenv('DATABASE_USER', ''),
+        'PASSWORD': os.getenv('DATABASE_PASSWORD', ''),
+        'HOST': os.getenv('DATABASE_HOST', ''),
+        'PORT': os.getenv('DATABASE_PORT', ''),
+    }
+}
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.getenv('SECRET_KEY', '%yvu#b$-c_duzk!_9x@^6bz5#mo#w3)89m4%-&#^u48i@bxiq$')
+SECRET_KEY = os.getenv('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv('DEBUG', 'False').lower() == 'true'
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'quadrosga.pythonanywhere.com', 'twitterclone-ahpj.onrender.com']
-
+ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '').split(',')
 
 # Application definition
 
@@ -90,42 +113,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "twitterclone.wsgi.application"
 
-
-# Default SQLite database for local development
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-    }
-}
-
-# Override with DATABASE_URL if set
-DATABASES['default'] = dj_database_url.config(
-    default=os.getenv('DATABASE_URL'),
-    conn_max_age=600,
-)
-
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'twitterclone',  # Database name from PythonAnywhere
-        'USER': 'quadrosga',       # Username from PythonAnywhere
-        'PASSWORD': 'twitterclone',   # Password from PythonAnywhere
-        'HOST': 'quadrosga.mysql.pythonanywhere-services.com',  # Host from PythonAnywhere
-        'PORT': '3306',  # Default MySQL port
-    }
-}
-
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.postgresql',
-#         'NAME': 'twitterclone',     
-#         'USER': 'twitteruser',     
-#         'PASSWORD': 'twitterclone',  
-#         'HOST': 'localhost',          
-#         'PORT': '5432',               
-#     }
-# }
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
