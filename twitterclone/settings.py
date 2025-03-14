@@ -14,6 +14,11 @@ import os
 from pathlib import Path
 import dj_database_url
 from dotenv import load_dotenv
+from django.core.management import call_command
+
+# Run migrations automatically (for debugging purposes only)
+if os.getenv('RUN_MIGRATIONS', 'False').lower() == 'true':
+    call_command('migrate')
 
 # Load environment variables from .env file
 load_dotenv()
@@ -99,6 +104,17 @@ DATABASES['default'] = dj_database_url.config(
     default=os.getenv('DATABASE_URL'),
     conn_max_age=600,
 )
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'twitterclone',  # Database name from PythonAnywhere
+        'USER': 'quadrosga',       # Username from PythonAnywhere
+        'PASSWORD': 'twitterclone',   # Password from PythonAnywhere
+        'HOST': 'quadrosga.mysql.pythonanywhere-services.com',  # Host from PythonAnywhere
+        'PORT': '3306',  # Default MySQL port
+    }
+}
 
 # DATABASES = {
 #     'default': {
