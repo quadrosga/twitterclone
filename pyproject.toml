@@ -17,3 +17,8 @@ rest-framework-simplejwt = "^0.0.2"
 djangorestframework-simplejwt = "^5.5.0"
 python-dotenv = "^1.0.1"
 mysqlclient = "^2.2.7"
+
+[[tool.poetry.source]]
+name = "pypi_mirror"
+url = "https://pypi.tuna.tsinghua.edu.cn/simple"
+default = true
