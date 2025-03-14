@@ -22,7 +22,7 @@ jobs:
           POSTGRES_PASSWORD: twitterclone
           POSTGRES_DB: twitterclone
         ports:
-          - 5433:5432
+          - 5432:5432 # Map host port 5432 to container port 5432
         options: >-
           --health-cmd="pg_isready -U twitteruser"
           --health-interval=10s
@@ -62,7 +62,7 @@ jobs:
         run: |
           sudo apt-get update && sudo apt-get install -y postgresql-client
           for i in {1..10}; do
-            if pg_isready -h localhost -p 5433 -U twitteruser -d twitterclone; then
+            if pg_isready -h localhost -p 5432 -U twitteruser -d twitterclone; then
               echo "PostgreSQL is ready!"
               break
             else
@@ -76,7 +76,7 @@ jobs:
 
       - name: Debug PostgreSQL connection
         env:
-          DATABASE_URL: postgres://twitteruser:twitterclone@localhost:5433/twitterclone
+          DATABASE_URL: postgres://twitteruser:twitterclone@localhost:5432/twitterclone
         run: |
           echo "Testing PostgreSQL connection..."
           psql "$DATABASE_URL" -c "SELECT 1;"
@@ -86,7 +86,7 @@ jobs:
 
       - name: Run migrations
         env:
-          DATABASE_URL: postgres://twitteruser:twitterclone@localhost:5433/twitterclone
+          DATABASE_URL: postgres://twitteruser:twitterclone@localhost:5432/twitterclone
           PYTHONPATH: $(poetry env info --path)/lib/python3.10/site-packages
         run: |
           which python
@@ -96,5 +96,5 @@ jobs:
 
       - name: Run tests
         env:
-          DATABASE_URL: postgres://twitteruser:twitterclone@localhost:5433/twitterclone
+          DATABASE_URL: postgres://twitteruser:twitterclone@localhost:5432/twitterclone
         run: poetry run python manage.py test
