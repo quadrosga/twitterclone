@@ -14,6 +14,11 @@ import os
 from pathlib import Path
 import dj_database_url
 from dotenv import load_dotenv
+from django.core.management import call_command
+
+# Run migrations automatically (for debugging purposes only)
+if os.getenv('RUN_MIGRATIONS', 'False').lower() == 'true':
+    call_command('migrate')
 
 # Load environment variables from .env file
 load_dotenv()
@@ -21,9 +26,25 @@ load_dotenv()
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
+# Use SQLite for local development and MySQL for production
+if os.getenv('ENVIRONMENT') == 'production':
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.mysql',
+            'NAME': os.getenv('DB_NAME', 'quadrosga$twitterclone'),
+            'USER': os.getenv('DB_USER', 'quadrosga'),
+            'PASSWORD': os.getenv('DB_PASSWORD', 'your-database-password'),
+            'HOST': os.getenv('DB_HOST', 'quadrosga.mysql.pythonanywhere-services.com'),
+            'PORT': os.getenv('DB_PORT', '3306'),
+        }
+    }
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
+    }
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.getenv('SECRET_KEY', '%yvu#b$-c_duzk!_9x@^6bz5#mo#w3)89m4%-&#^u48i@bxiq$')
@@ -87,18 +108,24 @@ WSGI_APPLICATION = "twitterclone.wsgi.application"
 
 
 # Default SQLite database for local development
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-    }
-}
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': BASE_DIR / 'db.sqlite3',
+#     }
+# }
 
-# Override with DATABASE_URL if set
-DATABASES['default'] = dj_database_url.config(
-    default=os.getenv('DATABASE_URL'),
-    conn_max_age=600,
-)
+# Default MySQL database for production
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.mysql',
+#         'NAME': 'twitterclone',  # Database name from PythonAnywhere
+#         'USER': 'quadrosga',       # Username from PythonAnywhere
+#         'PASSWORD': 'twitterclone',   # Password from PythonAnywhere
+#         'HOST': 'quadrosga.mysql.pythonanywhere-services.com',  # Host from PythonAnywhere
+#         'PORT': '3306',  # Default MySQL port
+#     }
+# }
 
 # DATABASES = {
 #     'default': {
