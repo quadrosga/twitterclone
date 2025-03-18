@@ -119,7 +119,7 @@ WSGI_APPLICATION = "twitterclone.wsgi.application"
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'quadrosga$default',  # Database name from PythonAnywhere
+        'NAME': 'quadrosga$twitterclone',  # Database name from PythonAnywhere
         'USER': 'quadrosga',       # Username from PythonAnywhere
         'PASSWORD': 'twitterclone',   # Password from PythonAnywhere
         'HOST': 'quadrosga.mysql.pythonanywhere-services.com',  # Host from PythonAnywhere
