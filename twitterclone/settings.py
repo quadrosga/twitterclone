@@ -12,7 +12,6 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 
 import os
 from pathlib import Path
-import dj_database_url
 from dotenv import load_dotenv
 from django.core.management import call_command
 
@@ -33,21 +32,21 @@ if os.getenv('ENVIRONMENT') == 'production':
             'ENGINE': 'django.db.backends.mysql',
             'NAME': os.getenv('DB_NAME', 'quadrosga$twitterclone'),
             'USER': os.getenv('DB_USER', 'quadrosga'),
-            'PASSWORD': os.getenv('DB_PASSWORD', 'your-database-password'),
+            'PASSWORD': os.getenv('DB_PASSWORD', 'twitterclone'),
             'HOST': os.getenv('DB_HOST', 'quadrosga.mysql.pythonanywhere-services.com'),
             'PORT': os.getenv('DB_PORT', '3306'),
         }
     }
 else:
     DATABASES = {
-        "default": {
-        "ENGINE": os.environ.get("SQL_ENGINE", "django.db.backends.sqlite3"),
-        "NAME": os.environ.get("SQL_DATABASE", BASE_DIR / "db.sqlite3"),
-        "USER": os.environ.get("SQL_USER", "user"),
-        "PASSWORD": os.environ.get("SQL_PASSWORD", "password"),
-        "HOST": os.environ.get("SQL_HOST", "localhost"),
-        "PORT": os.environ.get("SQL_PORT", "5432"),
-    }
+        'default': {
+            'ENGINE': os.environ.get('SQL_ENGINE', 'django.db.backends.sqlite3'),
+            'NAME': os.environ.get('SQL_DATABASE', BASE_DIR / 'db.sqlite3'),
+            'USER': os.environ.get('SQL_USER', 'user'),
+            'PASSWORD': os.environ.get('SQL_PASSWORD', 'password'),
+            'HOST': os.environ.get('SQL_HOST', 'localhost'),
+            'PORT': os.environ.get('SQL_PORT', '5432'),
+        }
     }
 
 # SECURITY WARNING: keep the secret key used in production secret!
@@ -190,6 +189,7 @@ USE_TZ = True
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+STATICFILES_DIRS = [os.path.join(BASE_DIR, 'tweets/static')]
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
