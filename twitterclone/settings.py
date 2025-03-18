@@ -32,7 +32,7 @@ if os.getenv('ENVIRONMENT') == 'production':
             'ENGINE': 'django.db.backends.mysql',
             'NAME': os.getenv('DB_NAME', 'quadrosga$twitterclone'),
             'USER': os.getenv('DB_USER', 'quadrosga'),
-            'PASSWORD': os.getenv('DB_PASSWORD', 'mysqlserver'),
+            'PASSWORD': os.getenv('DB_PASSWORD', 'twitterclone'),
             'HOST': os.getenv('DB_HOST', 'quadrosga.mysql.pythonanywhere-services.com'),
             'PORT': os.getenv('DB_PORT', '3306'),
         }
