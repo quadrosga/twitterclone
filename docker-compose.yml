@@ -1,0 +1,32 @@
+services:
+  db:
+    image: postgres:13.0-alpine
+    environment:
+      POSTGRES_USER: django
+      POSTGRES_PASSWORD: django
+      POSTGRES_DB: twitterclone
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - twitterclone_network
+
+  web:
+    build: .
+    command: poetry run python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - .:/app
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+    networks:
+      - twitterclone_network
+
+volumes:
+  postgres_data:
+
+networks:
+  twitterclone_network:
+    driver: bridge
