@@ -19,11 +19,12 @@ from django.core.management import call_command
 if os.getenv('RUN_MIGRATIONS', 'False').lower() == 'true':
     call_command('migrate')
 
-# Load environment variables from .env file
-load_dotenv()
-
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+# Load environment variables from .env file
+load_dotenv(os.path.join(BASE_DIR, '.env'))
+
 
 # Use SQLite for local development and MySQL for production
 if os.getenv('ENVIRONMENT') == 'production':
