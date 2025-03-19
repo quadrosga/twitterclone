@@ -127,6 +127,8 @@ DATABASES = {
     }
 }
 
+print("Database Name:", DATABASES['default']['NAME'])
+
 # DATABASES = {
 #     'default': {
 #         'ENGINE': 'django.db.backends.postgresql',
