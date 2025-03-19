@@ -127,17 +127,6 @@ DATABASES = {
     }
 }
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'twitterclone',  # Database name from PythonAnywhere
-        'USER': 'quadrosga',       # Username from PythonAnywhere
-        'PASSWORD': 'twitterclone',   # Password from PythonAnywhere
-        'HOST': 'quadrosga.mysql.pythonanywhere-services.com',  # Host from PythonAnywhere
-        'PORT': '3306',  # Default MySQL port
-    }
-}
-
 # DATABASES = {
 #     'default': {
 #         'ENGINE': 'django.db.backends.postgresql',
